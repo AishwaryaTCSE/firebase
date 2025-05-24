@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase User List</title>
+
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 60%;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    #error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>List of Users from Firebase</h2>
+  <div id="error"></div>
+
+  <table id="userTable">
+    <thead>
+      <tr><th>Name</th><th>Email</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    // ✅ Paste your Firebase config here:
+    const firebaseConfig = {
+  apiKey: "AIzaSyBJEkyKZsOlJwxEAfHKKFCLyPbJRMSdHms",
+  authDomain: "masai-firebase-crud.firebaseapp.com",
+  databaseURL: "https://masai-firebase-crud-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "masai-firebase-crud",
+  storageBucket: "masai-firebase-crud.firebasestorage.app",
+  messagingSenderId: "708904519414",
+  appId: "1:708904519414:web:d4e342ed93885217240ed7",
+  measurementId: "G-3B2WFLDLV0"
+};
+
+
+    // ✅ Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ✅ Fetch users from Firebase
+    function getUsers() {
+      db.ref("users").once("value")
+        .then(snapshot => {
+          const data = snapshot.val();
+          const tbody = document.querySelector("#userTable tbody");
+          tbody.innerHTML = "";
+
+          for (let key in data) {
+            const row = `<tr>
+              <td>${data[key].name}</td>
+              <td>${data[key].email}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+          }
+        })
+        .catch(error => {
+          document.getElementById("error").textContent = "Error: " + error.message;
+        });
+    }
+
+    // ✅ Call function on page load
+    window.onload = getUsers;
+  </script>
+</body>
+</html>
